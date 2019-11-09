@@ -24,7 +24,7 @@ def process_row_string(row):
 
 def load_csv(csv_file_path):
     """
-    Loads the dataset csv file. One issue with the data set: position is multiple positions comma seperated
+    Loads the dataset csv file. One issue with the data set: position is multiple positions comma separated
     :param csv_file_path:
     :return: Dataset headers and rows
     :rtype: tuple
@@ -35,7 +35,7 @@ def load_csv(csv_file_path):
         print('File exists: {0}'.format(csv_file_path))
         with open(csv_file_path, 'r') as csv:
             headers = csv.readline().strip('\n').split(',')
-            for line in csv.readlines()[:20]:
+            for line in csv.readlines():
                 data_rows.append(process_row_string(line.strip('\n')))
 
             return headers, data_rows
@@ -43,10 +43,46 @@ def load_csv(csv_file_path):
     print('File does not exists: {0}'.format(csv_file_path))
 
 
-header, rows = load_csv('./dataset/fifa20_data.csv')
-print(tabulate(rows, headers=header))
+def write_player_to_db(player, headers):
+
+    for attr, header in zip(player, headers):
+
+        print(header, ':', attr, ';type: {}'.format(determine_sql_type(attr)[-1]))
 
 
+def determine_sql_type(value):
+    """
+    Determine the SQL type of the value. Numbers can be float or int
+    :param value: Target value to determine sql type.
+    :type value: str
+    :return: tuple containing converted python type and sql type: (123, 'int')
+    :rtype: tuple
+    """
+
+    if value.isdigit():
+        return int(value), 'int'
+    else:
+        try:
+            value = float(value)
+            return value, 'real'
+        except ValueError:
+            return value, 'text'
+
+
+def print_tabulated_csv(csv_file_path, num_rows=10):
+    """
+    Prints tabulated view of the csv file.
+    :param csv_file_path: Path to csv file.
+    :type csv_file_path: str
+    :param num_rows: Number of rows to display.
+    :type num_rows: int
+    """
+
+    headers, rows = load_csv(csv_file_path)
+    print(tabulate(rows[:num_rows], headers=headers))
+
+
+print_tabulated_csv('./dataset/fifa20_data.csv')
 
 
 
