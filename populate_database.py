@@ -5,6 +5,7 @@ import sqlite3
 
 fifa_dataset = './dataset/fifa20_data.csv'
 
+
 def process_row_string(row):
     """Due to some strange formatting of positions we need to carry out some steps"""
     split_row = row.replace('"', '').split(',')
@@ -126,8 +127,6 @@ def populate_players_table(players):
     print(insert_query)
 
     for player in players:
-        print(len(player))
-        print(player)
         connection.execute(insert_query, tuple(player))
     connection.commit()
     connection.close()
