@@ -132,6 +132,36 @@ def populate_players_table(players):
     connection.close()
 
 
+def convert_feet_to_cm(height):
+    """
+    Convert a height in the form 5'10 to cm
+    :param height: Height in feet.
+    :type height: str
+    :return: Height in cm
+    :rtype: float
+    """
+
+    foot_to_cm = 30.48
+    inch_to_cm = 2.45
+
+    feet, inches = height.split("'")
+    return int(feet) * foot_to_cm + float(inches) * inch_to_cm
+
+
+def convert_weight_to_kg(weight):
+    """
+    Convert weight in the form '150lbs to kg'
+    :param weight: Weight in lbs
+    :type weight: str
+    :return: Weight in kg
+    :rtype: float
+    """
+
+    pound_to_kg = 0.453592
+    num_pounds = int(weight.split('lbs')[0])
+    return round(num_pounds * pound_to_kg, 2)
+
+
 if __name__ == '__main__':
     """Run this file as script"""
 
