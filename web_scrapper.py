@@ -81,6 +81,6 @@ def get_league_for_team(team):
 
 if __name__ == '__main__':
     print('Running web scrapper.')
-    # create_and_populate_clubs_table()
+    # create_and_populate_clubs_table(teams_url)
 
-    # print(get_league_for_team('Watford'))
+    print(get_league_for_team('Watford'))
