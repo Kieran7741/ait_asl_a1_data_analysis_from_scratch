@@ -54,10 +54,58 @@ def create_scatter_plot(x_values, y_values, x_label='', y_label='', title='', sa
         fig.savefig(save_path, bbox_inches='tight')
 
 
-def create_pie_chart(values, labels):
+def create_pie_chart(values, labels, x_label='', y_label='', title='', save_path=None):
+    """
+    Create a pie chart.
+    :param values: Segment totals.
+    :type: list or tuple
+    :param labels: Segment labels
+    :type: list or tuple
+    :param x_label: x axis label
+    :type x_label: str
+    :param y_label: y axis label
+    :type y_label: str
+    :param title: Plot title
+    :type title: str
+    :param save_path: Path to save figure to.
+    :type save_path: str
+    :return: figure and axes for further customization
+    :rtype: tuple    """
 
     fig, ax = plt.subplots()
     ax.pie(values, labels=labels, autopct="%.0f%%")
+    ax.set_title(title)
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    if save_path:
+        fig.savefig(save_path, bbox_inches='tight')
+    return fig, ax
+
+
+def create_bar_chart(values, labels, x_label='', y_label='', title='', save_path=None):
+    """
+    Create a bar chart.
+    :param values:
+    :param labels:
+    :param x_label: x axis label
+    :type x_label: str
+    :param y_label: y axis label
+    :type y_label: str
+    :param title: Plot title
+    :type title: str
+    :param save_path: Path to save figure to.
+    :type save_path: str
+    :return: figure and axes for further customization
+    :rtype: tuple
+    """
+    fig, ax = plt.subplots()
+    ax.bar(values, labels)
+    ax.set_title(title)
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    if save_path:
+        fig.savefig(save_path, bbox_inches='tight')
+    return fig, ax
 
 
 def get_count_of_each_position():
@@ -89,8 +137,8 @@ if __name__ == '__main__':
                         save_path='./figures/manu.png')
     create_scatter_plot(man_c[0], man_c[1], 'Age', 'Overall', 'Machester City Age vs Overall')
 
-    create_pie_chart([10,23], ['Dogs', 'Cats'])
+    position_counts = get_count_of_each_position()
+    create_pie_chart(position_counts.values(), position_counts.keys())
+    create_bar_chart(position_counts.keys(), position_counts.values(), y_label='Number', x_label='Position', title='Number of each position:')
 
     plt.show()
-
-    print(get_count_of_each_position())
