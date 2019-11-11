@@ -54,10 +54,30 @@ def create_scatter_plot(x_values, y_values, x_label='', y_label='', title='', sa
         fig.savefig(save_path, bbox_inches='tight')
 
 
-def create_pie_chart():
+def create_pie_chart(values, labels):
 
     fig, ax = plt.subplots()
-    ax.pie([10, 23, 50], labels=['dog', 'cat', 'mouse'], autopct="%.0f%%")
+    ax.pie(values, labels=labels, autopct="%.0f%%")
+
+
+def get_count_of_each_position():
+    """
+    Get a count of each position in the dataset
+    :return: dict containing a count of each position
+    :rtype: dict
+    """
+
+    with connect('players.db') as conn:
+        result = conn.execute('SELECT BP FROM players')
+        best_positions = [pos[0] for pos in result.fetchall()]
+
+    num_each_position = {}
+    for pos in best_positions:
+        if pos in num_each_position:
+            num_each_position[pos] = num_each_position[pos] + 1
+        else:
+            num_each_position[pos] = 0
+    return num_each_position
 
 
 if __name__ == '__main__':
@@ -69,6 +89,8 @@ if __name__ == '__main__':
                         save_path='./figures/manu.png')
     create_scatter_plot(man_c[0], man_c[1], 'Age', 'Overall', 'Machester City Age vs Overall')
 
-    create_pie_chart()
+    create_pie_chart([10,23], ['Dogs', 'Cats'])
 
     plt.show()
+
+    print(get_count_of_each_position())
