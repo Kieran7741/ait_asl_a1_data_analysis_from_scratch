@@ -82,7 +82,7 @@ def create_pie_chart(values, labels, x_label='', y_label='', title='', save_path
     return fig, ax
 
 
-def create_bar_chart(values, labels, x_label='', y_label='', title='', save_path=None):
+def create_bar_chart(values, labels, x_label='', y_label='', title='', horizontal=False, save_path=None):
     """
     Create a bar chart.
     :param values:
@@ -98,11 +98,20 @@ def create_bar_chart(values, labels, x_label='', y_label='', title='', save_path
     :return: figure and axes for further customization
     :rtype: tuple
     """
+
     fig, ax = plt.subplots()
-    ax.bar(values, labels)
+    if not horizontal:
+        ax.bar(values, labels)
+        plt.xticks(rotation=90)  # Prevents long labels overlapping
+
+    else:
+        ax.barh(values, labels)
     ax.set_title(title)
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
+    fig.tight_layout()  # Prevents long labels being cutoff
+
+
     if save_path:
         fig.savefig(save_path, bbox_inches='tight')
     return fig, ax
