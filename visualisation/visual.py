@@ -82,6 +82,7 @@ def create_pie_chart(values, labels, x_label='', y_label='', title='', save_path
     :rtype: tuple    """
 
     fig, ax = plt.subplots()
+    fig.canvas.set_window_title(title)
     ax.pie(values, labels=labels, autopct="%.0f%%")
     ax.set_title(title)
     ax.set_xlabel(x_label)
@@ -109,12 +110,13 @@ def create_bar_chart(values, labels, x_label='', y_label='', title='', horizonta
     """
 
     fig, ax = plt.subplots()
+    fig.canvas.set_window_title(title)
     if not horizontal:
-        ax.bar(values, labels)
+        ax.bar(labels, values)
         plt.xticks(rotation=90)  # Prevents long labels overlapping
 
     else:
-        ax.barh(values, labels)
+        ax.barh(labels, values)
     ax.set_title(title)
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
