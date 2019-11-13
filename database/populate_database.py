@@ -56,7 +56,7 @@ def load_csv(csv_file_path):
                 data_rows.append(process_row_string(line.strip('\n')))
 
             return headers, data_rows
-
+    
     print('File does not exists: {0}'.format(csv_file_path))
 
 
@@ -119,12 +119,7 @@ def populate_players_table(players):
 
     connection = sqlite3.connect('players.db')
 
-    print(['?'] * (len(players[0])))
-    print(len(players[0]))
-    print(tuple(players[0]))
-
     insert_query = 'INSERT INTO players VALUES({0})'.format(','.join(['?']*(len(players[0]))))
-    print(insert_query)
 
     for player in players:
         connection.execute(insert_query, tuple(player))
