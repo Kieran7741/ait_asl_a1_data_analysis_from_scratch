@@ -56,7 +56,7 @@ def load_csv(csv_file_path):
                 data_rows.append(process_row_string(line.strip('\n')))
 
             return headers, data_rows
-    
+
     print('File does not exists: {0}'.format(csv_file_path))
 
 

@@ -1,4 +1,5 @@
 from sqlite3 import connect
+import os
 
 
 def create_dict_from_db_query(db_result, col_names):
@@ -26,14 +27,18 @@ def create_dict_from_db_query(db_result, col_names):
 
 class DB:
 
-    """Database object to interact with an SQL Lite database"""
+    """Database object to interact with an existing SQL Lite database"""
 
     def __init__(self, db_path):
         """
         init method
         :param db_path: path to .db file containing the database
         :type db_path: str
+        raises EnviornmentError: if .db does not exist
         """
+        if not os.path.exists(db_path):
+            raise EnvironmentError(f'Could not find db at provided path: {db_path}')
+
         self.connection = connect(db_path)
         self.table = db_path.split('/')[-1].split('.db')[0]
         self.result = [] # The most recent result from a db query.
@@ -52,7 +57,7 @@ class DB:
         query = 'SELECT {select} FROM {_from}'.format(select=','.join(select), _from=self.table)
         if where:
             query += (f' WHERE {where}')
-
+        print(query)
         self.result = self.connection.execute(query).fetchall()
         return self.result
 
