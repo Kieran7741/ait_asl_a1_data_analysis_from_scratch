@@ -3,7 +3,7 @@ from tabulate import tabulate
 import sqlite3
 
 
-fifa_dataset = './dataset/fifa20_data.csv'
+fifa_dataset = '../dataset/fifa20_data.csv'
 
 
 def process_row_string(row):
@@ -136,3 +136,4 @@ if __name__ == '__main__':
     """Run this file as script"""
 
     print_tabulated_csv(fifa_dataset)
+    #create_players_table(fifa_dataset)
