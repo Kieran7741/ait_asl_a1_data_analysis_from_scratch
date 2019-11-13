@@ -3,3 +3,4 @@
 *.db
 database/*.txt
 .vscode/
+*/__pycache__/*

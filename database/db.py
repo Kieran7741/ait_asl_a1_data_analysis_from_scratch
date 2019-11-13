@@ -43,7 +43,7 @@ class DB:
         self.table = db_path.split('/')[-1].split('.db')[0]
         self.result = [] # The most recent result from a db query.
 
-    def select(self, select, where=''):
+    def select(self, select, where='', dict_result=True):
         """
         Execute SELECT queries.
         :param select: List of columns to select
@@ -58,8 +58,12 @@ class DB:
         if where:
             query += (f' WHERE {where}')
         print(query)
-        self.result = self.connection.execute(query).fetchall()
-        return self.result
+        if dict_result:
+            self.result = create_dict_from_db_query(self.connection.execute(query).fetchall(), select)
+            return self.result
+        else:
+            self.result = self.connection.execute(query).fetchall()
+            return self.result 
 
 
 if __name__ == '__main__':
