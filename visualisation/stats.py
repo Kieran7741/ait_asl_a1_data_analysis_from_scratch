@@ -10,7 +10,10 @@ def predict_value(x, slope, y_int):
     :type x: float
     :param slope: Slope of line of best fit.
     :type slope: float
-    :param y_int: 
+    :param y_int: y intersect(value of y when x is 0)
+    :type y_int: float
+    :return: preficted y value
+    :rtype: float
     """
 
     return x * slope + y_int
@@ -66,37 +69,40 @@ def get_slope(x_list, y_list):
     return (len(x_list) * sum_xy - sum_x * sum_y) / (len(x_list) * sum_x_sqr - sum_x ** 2)
 
 
-def calculate_least_squares_variables(independent, dependant):
+def calculate_least_squares_variables(x_values, y_values):
     """
     Calculates slope and y intersect for line of best fit:
         y = mx + c, where m = slope, c = y intersect(value of y when x is 0)
 
-    :param independent:
-    :param dependant:
+    :param x_values: list of x values used to calculate line of best fit.
+    :type x_values: list
+    :param y_values: list of y values used to calculate line of best fit
+    :type y_values: list
     :return: Slope and y intercept for line of best fit
+    :rtype: tuple
     """
 
-    m = round(get_slope(independent, dependant), 4)
-    c = round(get_y_intercept(independent, dependant, slope=m), 4)
+    m = round(get_slope(x_values, y_values), 4)
+    c = round(get_y_intercept(x_values, y_values, slope=m), 4)
     print('Line of best fit => y = {m}x + {c}'.format(m=m, c=c))
     return m, c
 
 
-def get_cords_for_best_fit_line(x_data, y_data):
+def get_cords_for_best_fit_line(x_list, y_list):
     """
     Gets two points on the line of best fit so it can be plotted.
-    
-    :param x_data: list of x axis values
-    :type x_data: list
-    :param y_data: list of y axis values
-    :type y_data: list
+
+    :param x_list: list of x axis values
+    :type x_list: list
+    :param y_list: list of y axis values
+    :type y_list: list
     :return: Two points(min, max) on the line of best fit.
     :rtype: tuple of tuples
     """
 
-    slope, c = calculate_least_squares_variables(x_data, y_data)
-    min_x = min(x_data)
-    max_x = max(x_data)
+    slope, c = calculate_least_squares_variables(x_list, y_list)
+    min_x = min(x_list)
+    max_x = max(x_list)
     cord_1 = (min_x, predict_value(min_x, slope=slope, y_int=c))
     cord_2 = (max_x, predict_value(max_x, slope=slope, y_int=c))
 
