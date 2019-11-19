@@ -58,8 +58,9 @@ def create_scatter_plot(x_values, y_values, x_label='', y_label='', title='', pl
         c1 , c2 = get_cords_for_best_fit_line(x_values, y_values)
         ax.plot([c1[0], c2[0]], [c1[1], c2[1]], label='Line of best fit', color='black')
         plt.legend()
-
+    
     if save_path:
+        print(f'Saving image to path: {save_path}')
         fig.savefig(save_path, bbox_inches='tight')
 
 

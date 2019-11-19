@@ -5,13 +5,35 @@ a basic dash board for football team
 
 
 from flask import Flask, render_template, redirect,  send_file
-
+from database.db import DB
+from visualisation import visual
+from utils.conversions import convert_money_string
+import os
 
 app = Flask(__name__, static_folder='./static_images/')
 
+def generate_dashboard_resources(team):
+    db = DB('database/players.db')
+
+    result = db.select(['Overall'], where=f'Club="{team}"')
+    average_overall = sum(result['Overall']) / float(len(result['Overall']))
+
+    player_values =  db.select(['Value'], where=f'Club="{team}"')['Value']
+    team_value = sum([convert_money_string(value) for value in player_values])
+  
+    image_path = f'static_images/{team}_age_v_overall.png'
+    if not os.path.exists(image_path):
+        result = db.select(['Age', 'Overall'], where=f'Club="{team}"')
+        visual.create_scatter_plot(result['Age'], result['Overall'], title='Arsenal Age vs Overall',
+                                   x_label='Age', y_label='Overall', plot_l_r_line=True, save_path=image_path)
+    return average_overall, team_value
+
 @app.route('/dashboard/<team>')
 def dashboard(team):
-    return render_template('dashboard.html', team=team)
+
+    average_overall, team_value = generate_dashboard_resources(team)
+    return 'success'
+    # return render_template('dashboard.html', team=team, average_overall=average_overall)
 
 @app.route('/')
 def redirect_to_dashboard():
@@ -19,9 +41,11 @@ def redirect_to_dashboard():
 
 
 @app.route('/get_image/<image_name>')
-def get_image(image_name):
+def get_team_age_v_overall(image_name):
 
-    return send_file(f'static_images/{image_name}.png', mimetype='image/png')
+    if os.path.exists(f'static_images/{image_name}.png'):
+        return send_file(f'static_images/{image_name}.png', mimetype='image/png')
+
 
 if __name__=='__main__':
     app.run()
