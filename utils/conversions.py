@@ -10,7 +10,7 @@ def convert_money_string(money_str):
     """
     try:
         if any([order in money_str.lower() for order in ['k', 'm']]):
-            multiplier = 1000 if money_str[-1].lower() == 'k' else 10000000
+            multiplier = 1000 if money_str[-1].lower() == 'k' else 1000000
             return float(money_str[1:-1]) * multiplier
         else:
             return float(money_str[1:])
