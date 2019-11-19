@@ -7,6 +7,7 @@ def convert_money_string(money_str):
     :param money_str:
     :type money_str: str
     :return: Amount as float
+    :rtype: float
     """
     try:
         if any([order in money_str.lower() for order in ['k', 'm']]):
@@ -16,7 +17,7 @@ def convert_money_string(money_str):
             return float(money_str[1:])
     except ValueError as e:
         print(f'Invalid string amount passed: {money_str}')
-        return 0
+        return 0.0
 
 
 def convert_feet_to_cm(height):
@@ -31,11 +32,16 @@ def convert_feet_to_cm(height):
     foot_to_cm = 30.48
     inch_to_cm = 2.45
 
-    feet, inches = height.split("'")
-    return int(feet) * foot_to_cm + float(inches) * inch_to_cm
+    try:
+        feet, inches = height.split("'")
+        return int(feet) * foot_to_cm + float(inches) * inch_to_cm
+    except ValueError as e:
+        print(f'Invalid height provided: {height}: ERROR: {e}')
+        return 0.0
+        
 
 
-def convert_weight_to_kg(weight):
+def convert_weight_lbs_to_kg(weight):
     """
     Convert weight in the form '150lbs to kg'
     :param weight: Weight in lbs
@@ -45,6 +51,9 @@ def convert_weight_to_kg(weight):
     """
 
     pound_to_kg = 0.453592
-    num_pounds = int(weight.split('lbs')[0])
-    return round(num_pounds * pound_to_kg, 2)
-
+    try:
+        num_pounds = int(weight.split('lbs')[0])
+        return round(num_pounds * pound_to_kg, 2)
+    except ValueError as e:
+        print(f'Invalid weight provided: {weight}: ERROR: {e}')
+        return 0.0
