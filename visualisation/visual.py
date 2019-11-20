@@ -1,4 +1,3 @@
-
 import matplotlib.pyplot as plt
 from matplotlib import style
 from sqlite3 import connect
@@ -55,13 +54,15 @@ def create_scatter_plot(x_values, y_values, x_label='', y_label='', title='', pl
         ax.set_title(title)
 
     if plot_l_r_line:
-        c1 , c2 = get_cords_for_best_fit_line(x_values, y_values)
+        c1, c2 = get_cords_for_best_fit_line(x_values, y_values)
         ax.plot([c1[0], c2[0]], [c1[1], c2[1]], label='Line of best fit', color='black')
         plt.legend()
     
     if save_path:
         print(f'Saving image to path: {save_path}')
         fig.savefig(save_path, bbox_inches='tight')
+
+    return fig, ax
 
 
 def create_pie_chart(values, labels, x_label='', y_label='', title='', save_path=None):
@@ -137,8 +138,8 @@ if __name__ == '__main__':
                         save_path='./figures/manu.png')
     create_scatter_plot(man_c[0], man_c[1], 'Age', 'Overall', 'Machester City Age vs Overall')
 
-    position_counts = get_count_of_each_position()
-    create_pie_chart(position_counts.values(), position_counts.keys())
-    create_bar_chart(position_counts.keys(), position_counts.values(), y_label='Number', x_label='Position', title='Number of each position:')
+    # position_counts = get_count_of_each_position()
+    # create_pie_chart(position_counts.values(), position_counts.keys())
+    # create_bar_chart(position_counts.keys(), position_counts.values(), y_label='Number', x_label='Position', title='Number of each position:')
 
     plt.show()

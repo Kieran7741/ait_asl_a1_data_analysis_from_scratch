@@ -9,12 +9,13 @@ import operator
 
 from visualisation import visual
 from utils import conversions
-from database.db_queries import select_cols
 from database.db import DB
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
+
 db_path = './database/{0}'
 players_db_path = db_path.format('players.db')
-
 
 
 def plot_highest_value_clubs(db, num_clubs=10):
@@ -43,7 +44,7 @@ def plot_highest_value_clubs(db, num_clubs=10):
     values = [value[1] for value in richest_clubs]
 
     return visual.create_bar_chart(values, labels, x_label='Value(€)', y_label='Club',
-                                  title=f'Top {num_clubs} highest value clubs', horizontal=True)
+                                   title=f'Top {num_clubs} highest value clubs', horizontal=True)
 
 
 if __name__ == '__main__':
@@ -63,7 +64,7 @@ if __name__ == '__main__':
     # Create Scatter plot of Players ages and Overalls
     result = player_db.select(['Age', 'Overall'], where='Club="Arsenal"')
     visual.create_scatter_plot(result['Age'], result['Overall'], title='Arsenal Age vs Overall',
-                            x_label='Age', y_label='Overall', plot_l_r_line=True)
+                               x_label='Age', y_label='Overall', plot_l_r_line=True)
 
     # Plot top 20 highest value clubs
     plot_highest_value_clubs(player_db, 20)

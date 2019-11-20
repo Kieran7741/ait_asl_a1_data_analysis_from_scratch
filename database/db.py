@@ -50,13 +50,15 @@ class DB:
         :type select: list
         :param where: Where clause for select query
         :type where: str
+        :param dict_result: return the query result as a dict
+        :type dict_result: bool
         :return: Result from select query
-        :rtype: list of tuples
+        :rtype: list or dict
         """
         
         query = 'SELECT {select} FROM {_from}'.format(select=','.join(select), _from=self.table)
         if where:
-            query += (f' WHERE {where}')
+            query += f' WHERE {where}'
         print(query)
         if dict_result:
             self.result = create_dict_from_db_query(self.connection.execute(query).fetchall(), select)
