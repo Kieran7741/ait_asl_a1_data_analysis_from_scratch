@@ -1,6 +1,60 @@
 """Statistics module containing basic stats related functions"""
 
 
+###############
+# Basic stats #
+###############
+
+def average(target_list):
+    """
+    Calculate average value in the target list
+    :param target_list: list to calculate average of
+    :type target_list: list
+    :return: average value in the list
+    :rtype: float
+    """
+    return sum(target_list) / len(target_list)
+
+
+def median(target_list):
+    """
+    Calculate median value in the target list.
+
+    :param target_list: list to calculate median of
+    :type target_list: list
+    :return: The 'middle value'
+    :rtype: float or int
+    """
+
+    target_list.sort()
+    index = (len(target_list) - 1) // 2
+
+    if len(target_list) % 2:
+        return target_list[index]
+    else:
+        return (target_list[index] + target_list[index + 1]) / 2.0
+
+
+def mode(target_list):
+    """
+    Calculate mode of the target list.
+    Limitations of this function:
+        If the list has two modes it will return the first mode.
+            mode([1,1,2,2]) --> 1
+
+    :param target_list: list to calculate mode of
+    :type target_list: list
+    :return: float or int
+    """
+
+    return max(target_list, key=target_list.count)
+
+
+######################################
+# Line of best fit related functions #
+######################################
+
+
 def predict_value(x, slope, y_int):
     """
     Predicts the value y depending on the equation of the line of best fit.

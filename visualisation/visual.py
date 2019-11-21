@@ -11,7 +11,8 @@ def get_team_age_overall(team_name):
     Get each players age and overall for the given team name.
     :param team_name: Target team
     :type team_name: str
-    :return:
+    :return: tuple containing ages and overalls
+    :rtype: tuple
     """
     with connect('players.db') as conn:
         result = conn.execute(f'SELECT Age, Overall FROM players WHERE Club="{team_name}"')

@@ -35,8 +35,7 @@ def validate_team(team):
 
     if db.select(['Club'], where=f'Club="{team}"')['Club']:
         return True
-    else:
-        return False
+    return False
 
 
 def generate_dashboard_resources(team):
