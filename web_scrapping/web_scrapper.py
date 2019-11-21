@@ -36,14 +36,17 @@ def build_league_map(url):
     :rtype: dict
     """
 
+    exlude_leagues = ['European U21 Championship', 'Scottish Football', 'Internationals', 'Africa Cup of Nations']
+
     soup = make_the_soup(url)
     league_map = {}
     league_elements = [el for el in soup.find_all('li', attrs={'class': 'category-list__item accordian__item'})]
 
     for league in league_elements:
         league_name = league.find('h4', attrs={'class': 'category-list__header'}).text.strip(' \n')
-        teams = [team.text.strip() for team in league.find_all('a', attrs={'class': 'category-list__sub-link'})]
-        league_map[league_name] = teams
+        if league_name not in exlude_leagues:
+            teams = [team.text.strip() for team in league.find_all('a', attrs={'class': 'category-list__sub-link'})]
+            league_map[league_name] = teams
 
     return league_map
 
@@ -61,7 +64,7 @@ def create_and_populate_clubs_table(url):
     except Exception as e:
         print(f'Could not generate league map due to {e}')
     else:
-        with sqlite3.connect('leagues.db') as connection:
+        with sqlite3.connect('../database/leagues.db') as connection:
             connection.execute('CREATE TABLE IF NOT EXISTS leagues(league TEXT, team TEXT)')
             for league, teams in league_map.items():
                 for team in teams:
@@ -81,6 +84,6 @@ def get_league_for_team(team):
 
 if __name__ == '__main__':
     print('Running web scrapper.')
-    # create_and_populate_clubs_table(teams_url)
+    create_and_populate_clubs_table(teams_url)
 
-    print(get_league_for_team('Watford'))
+    # print(get_league_for_team('Watford'))

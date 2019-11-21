@@ -10,12 +10,28 @@ import operator
 from visualisation import visual
 from utils import conversions
 from database.db import DB
+import matplotlib.pyplot as plt
+
 import matplotlib
 matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
+
 
 db_path = './database/{0}'
 players_db_path = db_path.format('players.db')
+leagues_db_path = db_path.format('leagues.db')
+
+
+def get_cost_of_team(db, team):
+    """
+    Calculates the cost of a team based on player values.
+    :param db: player.db instance
+    :type db: database.db.DB
+    :param team: Team name
+    :type team: str
+    :return: total cost of team
+    """
+    result = db.select(['Value'], where=f'Club="{team}"')['Value']
+    return sum([conversions.convert_money_string(value) for value in result])
 
 
 def plot_highest_value_clubs(db, num_clubs=10):
@@ -40,6 +56,9 @@ def plot_highest_value_clubs(db, num_clubs=10):
         club_value_dict[club] += conversions.convert_money_string(value)
 
     richest_clubs = sorted(club_value_dict.items(), key=operator.itemgetter(1), reverse=True)[:num_clubs]
+    print(f'Highest value clubs: {richest_clubs}')
+
+    # prepare chart
     labels = [club_name[0] for club_name in richest_clubs]
     values = [value[1] for value in richest_clubs]
 
@@ -47,10 +66,33 @@ def plot_highest_value_clubs(db, num_clubs=10):
                                    title=f'Top {num_clubs} highest value clubs', horizontal=True)
 
 
+def plot_highest_value_leagues(player_db, league_db):
+
+    all_team_leagues = league_db.select(['League', 'Team'], dict_result=False)
+
+    league_map = {}
+    for league, team in all_team_leagues:
+        if league not in league_map.keys():
+            league_map[league] = 0
+        league_map[league] += get_cost_of_team(player_db, team)
+
+    richest_leagues = sorted(league_map.items(), key=operator.itemgetter(1), reverse=True)
+    print(f'League values: {richest_leagues}')
+
+    # Prepare Chart
+    labels = [league_name[0] for league_name in richest_leagues]
+    values = [value[1] for value in richest_leagues]
+    return visual.create_bar_chart(values, labels, x_label='Value(€ Billion)', y_label='League',
+                                   title=f'League values', horizontal=True)
+
+
 if __name__ == '__main__':
     
-    # Create DB object
+    # Create player DB object
     player_db = DB(players_db_path)
+
+    # Create league DB object
+    league_db = DB(leagues_db_path)
 
     # Create bar chart of Player wages at Manchester united
     result = player_db.select(select=['Name', 'Wage'], where='Club="Manchester United"')
@@ -68,6 +110,9 @@ if __name__ == '__main__':
 
     # Plot top 20 highest value clubs
     plot_highest_value_clubs(player_db, 20)
+
+    # Create bar chart or league values
+    plot_highest_value_leagues(player_db, league_db)
 
     # Show all plots
     plt.show()
