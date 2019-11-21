@@ -21,23 +21,6 @@ matplotlib.use('Agg')
 app = Flask(__name__, static_folder='./static_images/')
 
 
-def validate_team(team):
-    """
-    Validates that the team exists in the database.
-
-    :param team: Team name
-    :type team: str
-    :return: Team found
-    :rtype: bool
-    """
-
-    db = DB('database/players.db')
-
-    if db.select(['Club'], where=f'Club="{team}"')['Club']:
-        return True
-    return False
-
-
 def generate_dashboard_resources(team):
     """
     Generate resources required for the team dashboard.
@@ -75,7 +58,8 @@ def dashboard(team):
     """
 
     # Validate team name
-    if validate_team(team):
+    db = DB('database/players.db')
+    if db.validate_team(team):
         average_overall, team_value = generate_dashboard_resources(team)
         return render_template('dashboard.html', team=team, average_overall=math.ceil(average_overall),
                                team_value=team_value)

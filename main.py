@@ -1,11 +1,12 @@
 """
-Main script to interact with the data.
+Main script to interact with the Fifa 20 dataset.
 
 NOTE: Ensure a GUI backend is installed on your system.
       This is required to use plt.show()
       >> sudo apt-get install python3-tk
 """
 import operator
+import sys
 
 from visualisation import visual
 from utils import conversions
@@ -56,7 +57,7 @@ def plot_highest_value_clubs(db, num_clubs=10):
         club_value_dict[club] += conversions.convert_money_string(value)
 
     richest_clubs = sorted(club_value_dict.items(), key=operator.itemgetter(1), reverse=True)[:num_clubs]
-    print(f'Highest value clubs: {richest_clubs}')
+    print(f'\nHighest value clubs: {richest_clubs}')
 
     # prepare chart
     labels = [club_name[0] for club_name in richest_clubs]
@@ -77,7 +78,7 @@ def plot_highest_value_leagues(player_db, league_db):
         league_map[league] += get_cost_of_team(player_db, team)
 
     richest_leagues = sorted(league_map.items(), key=operator.itemgetter(1), reverse=True)
-    print(f'League values: {richest_leagues}')
+    print(f'\nLeague values: {richest_leagues}')
 
     # Prepare Chart
     labels = [league_name[0] for league_name in richest_leagues]
@@ -87,25 +88,38 @@ def plot_highest_value_leagues(player_db, league_db):
 
 
 if __name__ == '__main__':
-    
-    # Create player DB object
-    player_db = DB(players_db_path)
 
-    # Create league DB object
+    # Create DB objects
+    player_db = DB(players_db_path)
     league_db = DB(leagues_db_path)
 
+    # Read team name from command line or input
+    if len(sys.argv) > 1:
+        team_name = sys.argv[1]
+    else:
+        team_name = input('Please enter team name: ')
+
+    # Validate the provided team name: Case sensitive
+    if not player_db.validate_team(team_name):
+        raise Exception(f'Invalid team name provided: {team_name}')
+
+    # Some number associated with the dataset
+    entire_dataset = player_db.select(['*'], dict_result=False)
+    print(f'\nNumber of rows in the dataset: {len(entire_dataset)}')
+    # Generate Plots
+
     # Create bar chart of Player wages at Manchester united
-    result = player_db.select(select=['Name', 'Wage'], where='Club="Manchester United"')
+    result = player_db.select(select=['Name', 'Wage'], where=f'Club="{team_name}"')
 
     # Wage strings need to be converted to floats for plotting
     convert_wage_str = [conversions.convert_money_string(amount) for amount in result['Wage']]
 
     visual.create_bar_chart(convert_wage_str, result['Name'], x_label='Player', y_label='Wage(€)',
-                            title='Manchester United player wages',  horizontal=False)
+                            title=f'{team_name} player wages',  horizontal=False)
 
     # Create Scatter plot of Players ages and Overalls
-    result = player_db.select(['Age', 'Overall'], where='Club="Arsenal"')
-    visual.create_scatter_plot(result['Age'], result['Overall'], title='Arsenal Age vs Overall',
+    result = player_db.select(['Age', 'Overall'], where=f'Club="{team_name}"')
+    visual.create_scatter_plot(result['Age'], result['Overall'], title=f'{team_name} Age vs Overall',
                                x_label='Age', y_label='Overall', plot_l_r_line=True)
 
     # Plot top 20 highest value clubs

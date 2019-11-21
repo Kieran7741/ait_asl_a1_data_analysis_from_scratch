@@ -59,13 +59,27 @@ class DB:
         query = 'SELECT {select} FROM {_from}'.format(select=','.join(select), _from=self.table)
         if where:
             query += f' WHERE {where}'
-        print(query)
+        # print(query)
         if dict_result:
             self.result = create_dict_from_db_query(self.connection.execute(query).fetchall(), select)
             return self.result
         else:
             self.result = self.connection.execute(query).fetchall()
-            return self.result 
+            return self.result
+
+    def validate_team(self, team):
+        """
+        Validates that the team exists in the database.
+
+        :param team: Team name
+        :type team: str
+        :return: Team found
+        :rtype: bool
+        """
+
+        if self.select(['Club'], where=f'Club="{team}"')['Club']:
+            return True
+        return False
 
 
 if __name__ == '__main__':
