@@ -15,7 +15,7 @@ def convert_money_string(money_str):
             return float(money_str[1:-1]) * multiplier
         else:
             return float(money_str[1:])
-    except ValueError as e:
+    except ValueError:
         print(f'Invalid string amount passed: {money_str}')
         return 0.0
 
@@ -39,7 +39,6 @@ def convert_feet_to_cm(height):
         print(f'Invalid height provided: {height}: ERROR: {e}')
         return 0.0
         
-
 
 def convert_weight_lbs_to_kg(weight):
     """

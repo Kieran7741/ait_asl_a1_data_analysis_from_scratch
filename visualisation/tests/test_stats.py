@@ -12,7 +12,7 @@ class TestConversions(unittest.TestCase):
     def test_average(self):
         my_list = [1, 2, 3, 4, 6]
 
-        self.assertEqual(3.2, stats.average(my_list))
+        self.assertEqual(3.2, stats.mean(my_list))
 
     def test_median(self):
 
@@ -30,6 +30,11 @@ class TestConversions(unittest.TestCase):
         # Limitation: Multiple modes
         my_list.append(2)
         self.assertEqual(2, stats.mode(my_list))
+
+    def test_standard_deviation(self):
+
+        my_list = [9, 2, 5, 4, 12, 7, 8, 11, 9, 3, 7, 4, 12, 5, 4, 10, 9, 6, 9, 4]
+        self.assertEqual(3.061, stats.standard_deviation(my_list))
 
     def test_predict_value(self):
         self.assertEqual(4.5, stats.predict_value(5, 0.5, 2))

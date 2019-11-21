@@ -1,16 +1,18 @@
 """Statistics module containing basic stats related functions"""
 
+import math
 
 ###############
 # Basic stats #
 ###############
 
-def average(target_list):
+
+def mean(target_list):
     """
     Calculate average value in the target list
     :param target_list: list to calculate average of
     :type target_list: list
-    :return: average value in the list
+    :return: average value of the list
     :rtype: float
     """
     return sum(target_list) / len(target_list)
@@ -50,10 +52,24 @@ def mode(target_list):
     return max(target_list, key=target_list.count)
 
 
+def standard_deviation(target_values):
+    """
+    Calculate the standard deviation for a given list
+
+    :param target_values: list of target values
+    :type target_values: list
+    :return: standard deviation
+    :rtype: float
+    """
+
+    values_mean = mean(target_values)
+    minus_mean_square = [(value - values_mean)**2 for value in target_values]
+    return round(math.sqrt(sum(minus_mean_square) / (len(target_values) - 1)), 3)
+
+
 ######################################
 # Line of best fit related functions #
 ######################################
-
 
 def predict_value(x, slope, y_int):
     """
@@ -161,3 +177,8 @@ def get_cords_for_best_fit_line(x_list, y_list):
     cord_2 = (max_x, predict_value(max_x, slope=slope, y_int=c))
 
     return cord_1, cord_2
+
+
+if __name__ == '__main__':
+
+    print('Standard Deviation: ' + str(standard_deviation([9, 2, 5, 4, 12, 7, 8, 11, 9, 3, 7, 4, 12, 5, 4, 10, 9, 6, 9, 4])))

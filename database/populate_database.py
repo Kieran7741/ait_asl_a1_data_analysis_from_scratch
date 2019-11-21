@@ -1,3 +1,7 @@
+"""
+Script to Generate SQL Lite db from the Fifa_20 csv file
+"""
+
 import os
 from tabulate import tabulate
 import sqlite3
@@ -27,6 +31,13 @@ def process_row_string(row):
 
 
 def remove_spaces_from_headers(headers):
+    """
+    SQL headers should not contain spaces. Replace all spaces with '_'
+    :param headers: list of headers
+    :type: list
+    :return: updated headers with removed space
+    :rtype: list
+    """
 
     new_headers = []
     for header in headers:
@@ -92,9 +103,9 @@ def print_tabulated_csv(csv_file_path, num_rows=10):
     print(tabulate(rows[:num_rows], headers=headers))
 
 
-def create_players_table(csv_file_path):
+def create_players_db(csv_file_path):
     """
-    create fifa dataset to a sqllite db
+    Convert fifa dataset to a sqllite db.
     :param csv_file_path: File path to dataset
     :type csv_file_path: str
     """
@@ -130,5 +141,9 @@ def populate_players_table(players):
 if __name__ == '__main__':
     """Run this file as script"""
 
-    print_tabulated_csv(fifa_dataset)
-    #create_players_table(fifa_dataset)
+    # Displays the CSV file in table format. If you are having issues viewing in the terminal it is due to line wrapping
+    # Pipe the output to a file ensure that lines are not wrapped by the viewer/editor
+    print_tabulated_csv(fifa_dataset, num_rows=50)
+
+    # Generate the players.db
+    # create_players_db(fifa_dataset)
