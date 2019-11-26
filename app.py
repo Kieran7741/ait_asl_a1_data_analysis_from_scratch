@@ -8,6 +8,7 @@ from flask import Flask, render_template, redirect, send_file, abort
 from database.db import DB
 from visualisation import visual
 from utils.conversions import convert_money_string
+from visualisation import stats
 import os
 import math
 
@@ -34,11 +35,10 @@ def generate_dashboard_resources(team):
 
     db = DB('database/players.db')
 
-    result = db.select(['Overall'], where=f'Club="{team}"')
-    average_overall = sum(result['Overall']) / float(len(result['Overall']))
+    result = db.select(['Overall', 'Value'], where=f'Club="{team}"')
 
-    player_values =  db.select(['Value'], where=f'Club="{team}"')['Value']
-    team_value = sum([convert_money_string(value) for value in player_values])
+    average_overall = stats.mean(result['Overall'])
+    team_value = sum([convert_money_string(value) for value in result['Value']])
   
     image_path = f'static_images/{team}_age_v_overall.png'
     if not os.path.exists(image_path):

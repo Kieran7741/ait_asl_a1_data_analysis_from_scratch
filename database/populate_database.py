@@ -5,51 +5,31 @@ Script to Generate SQL Lite db from the Fifa_20 csv file
 import os
 from tabulate import tabulate
 import sqlite3
+from csv import reader
 
 
 fifa_dataset = '../dataset/fifa20_data.csv'
 
 
-def process_row_string(row):
-    """Due to some strange formatting of positions we need to carry out some steps"""
-    split_row = row.replace('"', '').split(',')
-    positions = []
-    position_start_index = 3
-    position_end_index = position_start_index
-
-    for pos in split_row[position_start_index:]:
-        try:
-            int(pos)
-            break
-        except ValueError:
-            positions.append(pos)
-            position_end_index += 1
-
-    positions = ';'.join(positions)
-
-    return split_row[:position_start_index] + [positions] + split_row[position_end_index:]
-
-
-def remove_spaces_from_headers(headers):
+def remove_quote_from_height(row, index):
     """
-    SQL headers should not contain spaces. Replace all spaces with '_'
-    :param headers: list of headers
-    :type: list
-    :return: updated headers with removed space
+    Using the csv.reader causes the height column to contain a trailing ".
+    :param row: row containing height
+    :type row: list
+    :param index: height position
+    :type index: int
+    :return: Updated row
     :rtype: list
     """
 
-    new_headers = []
-    for header in headers:
-        header = header.replace(' ', '_')
-        new_headers.append(header)
-
-    return new_headers
+    height = row[index]
+    row[index] = height.replace('"', '')
+    return row
 
 
 def load_csv(csv_file_path):
     """
-    Loads the dataset csv file. One issue with the data set: position is multiple positions comma separated
+    Loads the dataset csv file.
     :param csv_file_path:
     :return: Dataset headers and rows
     :rtype: tuple
@@ -58,13 +38,16 @@ def load_csv(csv_file_path):
 
     if os.path.exists(csv_file_path):
         print('File exists: {0}'.format(csv_file_path))
-        with open(csv_file_path, 'r') as csv:
-            # First line of the csv contains the headers
-            # Need to also remove the space and '/' in any of the headers. This makes it easier to create the SQL player table.
-            headers = [header.replace(' ', '_').replace('/', '_') for header in csv.readline().strip('\n').split(',')]
+        with open(csv_file_path, 'r') as csv_file:
 
-            for line in csv.readlines():
-                data_rows.append(process_row_string(line.strip('\n')))
+            contents = reader(csv_file, delimiter=',')
+            # First line of the csv contains the headers
+            # Need to also remove the space and '/' in any of the headers.
+            # This makes it easier to create the SQL player table.
+            headers = [header.replace(' ', '_').replace('/', '_') for header in next(contents)]
+
+            for row in contents:
+                data_rows.append(remove_quote_from_height(row, index=headers.index('Height')))
 
             return headers, data_rows
 

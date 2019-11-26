@@ -8,7 +8,7 @@ NOTE: Ensure a GUI backend is installed on your system.
 import operator
 import sys
 
-from visualisation import visual
+from visualisation import visual, stats
 from utils import conversions
 from database.db import DB
 import matplotlib.pyplot as plt
@@ -87,6 +87,51 @@ def plot_highest_value_leagues(player_db, league_db):
                                    title=f'League values', horizontal=True)
 
 
+def print_basic_stats_about_team(player_db, team):
+    """
+    Display some basic stats about the provided team.
+
+    :param team: Name of team
+    :type team: str
+    :return: tuple -> (average_age, modal_age, average_overall, number_of_players)
+    :rtype: tuple
+    """
+
+    print(f'Calculating statistics for {team}')
+
+    result = player_db.select(['Age', 'Overall', 'Wage', 'Value'], where=f'Club="{team}"')
+
+    average_age = round(stats.mean(result['Age']), 1)
+    modal_age = stats.mode(result['Age'])
+    age_deviation = round(stats.standard_deviation(result['Age']), 1)
+    print('Team Age:')
+    print(f'Mean: {average_age}')
+    print(f'Mode: {modal_age}')
+    print(f'Deviation: {age_deviation}')
+
+    average_overall = round(stats.mean(result['Overall']), 1)
+    modal_overall = stats.mode(result['Overall'])
+    overall_deviation = round(stats.standard_deviation(result['Overall']), 1)
+    print('Team Overall:')
+    print(f'Mean: {average_overall}')
+    print(f'Mode: {modal_overall}')
+    print(f'Deviation: {overall_deviation}')
+
+    wage_as_num = [conversions.convert_money_string(wage) for wage in result['Wage']]
+    average_wage = stats.mean(wage_as_num)
+    wage_deviation = stats.standard_deviation(wage_as_num)
+    print('Team Wage:')
+    print(f'Mean: {average_wage}')
+    print(f'Deviation: {wage_deviation}')
+
+    num_players = len(wage_as_num)
+    print(f'Number of players: {num_players}')
+
+    return (average_age, modal_age, age_deviation,
+            average_overall, modal_overall, overall_deviation,
+            average_wage, wage_deviation, num_players)
+
+
 if __name__ == '__main__':
 
     # Create DB objects
@@ -106,6 +151,9 @@ if __name__ == '__main__':
     # Some number associated with the dataset
     entire_dataset = player_db.select(['*'], dict_result=False)
     print(f'\nNumber of rows in the dataset: {len(entire_dataset)}')
+
+    print_basic_stats_about_team(player_db, team_name)
+
     # Generate Plots
 
     # Create bar chart of Player wages at Manchester united
