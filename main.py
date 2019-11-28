@@ -7,6 +7,7 @@ NOTE: Ensure a GUI backend is installed on your system.
 """
 import operator
 import sys
+from collections import OrderedDict
 
 from visualisation import visual, stats
 from utils import conversions
@@ -38,6 +39,7 @@ def get_cost_of_team(db, team):
 def plot_highest_value_clubs(db, num_clubs=10):
     """
     Plot the highest value clubs.
+
     :param db: DB object
     :type db: `database.DB`
     :param num_clubs: Number of clubs to display
@@ -64,10 +66,20 @@ def plot_highest_value_clubs(db, num_clubs=10):
     values = [value[1] for value in richest_clubs]
 
     return visual.create_bar_chart(values, labels, x_label='Value(€)', y_label='Club',
-                                   title=f'Top {num_clubs} highest value clubs', horizontal=True)
+                                   title=f'Top {num_clubs} highest value clubs', horizontal=True, save_path='./figures/highest_value_clubs.png')
 
 
 def plot_highest_value_leagues(player_db, league_db):
+    """
+    Plot league values.
+
+    :param player_db: Player db
+    :type player_db: database.db.DB
+    :param league_db: League db
+    :type league_db: database.db.DB
+    :return: figure and axes for further customization
+    :rtype: tuple
+    """
 
     all_team_leagues = league_db.select(['League', 'Team'], dict_result=False)
 
@@ -84,13 +96,55 @@ def plot_highest_value_leagues(player_db, league_db):
     labels = [league_name[0] for league_name in richest_leagues]
     values = [value[1] for value in richest_leagues]
     return visual.create_bar_chart(values, labels, x_label='Value(€ Billion)', y_label='League',
-                                   title=f'League values', horizontal=True)
+                                   title=f'League values', horizontal=True, save_path=f'./figures/league_values.png')
+
+
+def plot_age_pie_chart(player_db):
+    """
+    Generate a pie chart showing the proportion of players between certain age ranges.
+
+    :param player_db: Player database
+    :type player_db: databasae.db.DB
+    :return: figure and axes for further customization
+    :rtype: tuple
+    """
+
+    ages = player_db.select(['Age'])['Age']
+
+    youngest_age = min(ages)
+    oldest_age = max(ages)
+
+    print(f'Youngest age: {youngest_age}; Oldest age: {oldest_age}')
+
+    age_brackets = [21, 26, 31, 36, oldest_age]
+
+    age_counts = OrderedDict()
+    for i, age_bracket in enumerate(age_brackets):
+
+        if age_bracket == 21:
+            # first age bracket, use youngest age
+            age_counts[f'{youngest_age}-{age_bracket}'] = len([age for age in ages
+                                                               if youngest_age <= age <= age_bracket])
+        elif i+1 < len(age_brackets):
+            # ensure there is a age bracket left
+            age_counts[f'{age_bracket}-{age_brackets[i+1]}'] = len([age for age in ages
+                                                                    if age_bracket <= age <= age_brackets[i+1]])
+
+    print(f'Age counts: {age_counts}')
+
+    brackets = age_counts.keys()
+    counts = age_counts.values()
+
+    return visual.create_pie_chart(counts, labels=brackets, title='Player age counts',
+                                   save_path='./figures/age_brackets.png')
 
 
 def print_basic_stats_about_team(player_db, team):
     """
     Display some basic stats about the provided team.
 
+    :param player_db: Player DB object
+    :type player_db: database.db.DB
     :param team: Name of team
     :type team: str
     :return: tuple -> (average_age, modal_age, average_overall, number_of_players)
@@ -156,7 +210,7 @@ if __name__ == '__main__':
 
     print_basic_stats_about_team(player_db, team_name)
 
-    ###### Generate Plots ######
+    ###### Generate Plots specific to team ######
 
     # Create bar chart of Player wages at Manchester united
     result = player_db.select(select=['Name', 'Wage'], where=f'Club="{team_name}"')
@@ -165,18 +219,23 @@ if __name__ == '__main__':
     convert_wage_str = [conversions.convert_money_string(amount) for amount in result['Wage']]
 
     visual.create_bar_chart(convert_wage_str, result['Name'], x_label='Player', y_label='Wage(€)',
-                            title=f'{team_name} player wages',  horizontal=False)
+                            title=f'{team_name} player wages',  horizontal=False, save_path=f'./figures/{team_name}_wages.png')
 
     # Create Scatter plot of Players ages and Overalls
     result = player_db.select(['Age', 'Overall'], where=f'Club="{team_name}"')
     visual.create_scatter_plot(result['Age'], result['Overall'], title=f'{team_name} Age vs Overall',
-                               x_label='Age', y_label='Overall', plot_l_r_line=True)
+                               x_label='Age', y_label='Overall', plot_l_r_line=True, save_path=f'./figures/{team_name}_age_overall.png')
+
+    ###### Generate Plots Generic to dataset ######
 
     # Plot top 20 highest value clubs
     plot_highest_value_clubs(player_db, 20)
 
-    # Create bar chart or league values
+    # Create bar chart of league values
     plot_highest_value_leagues(player_db, league_db)
+
+    # Plot age bracket pie chart
+    plot_age_pie_chart(player_db)
 
     # Show all plots
     plt.show()
