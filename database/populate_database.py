@@ -92,23 +92,29 @@ def create_players_db(csv_file_path):
     :param csv_file_path: File path to dataset
     :type csv_file_path: str
     """
-    headers, rows = load_csv(csv_file_path)
 
-    value_type_pairs = ['{name} {sql_type}'.format(name=value_name, sql_type=determine_sql_type(value))
-                        for value_name, value in zip(headers, rows[0])]
+    if not os.path.exists('players.db'):
+        headers, rows = load_csv(csv_file_path)
 
-    connection = sqlite3.connect('players.db')
-    connection.execute('CREATE TABLE IF NOT EXISTS players({value_type_pairs})'.format(value_type_pairs=','.join(value_type_pairs)))
-    connection.commit()
-    connection.close()
+        value_type_pairs = ['{name} {sql_type}'.format(name=value_name, sql_type=determine_sql_type(value))
+                            for value_name, value in zip(headers, rows[0])]
 
-    populate_players_table(rows)
+        connection = sqlite3.connect('players.db')
+        connection.execute('CREATE TABLE IF NOT EXISTS players({value_type_pairs})'.format(value_type_pairs=','.join(value_type_pairs)))
+        connection.commit()
+        connection.close()
+
+        populate_players_table(rows)
+
+    else:
+        print('Database already exists')
 
 
 def populate_players_table(players):
     """
     Insert players into db
     :param players: list of players
+    :type players: list
     """
 
     connection = sqlite3.connect('players.db')
@@ -129,4 +135,4 @@ if __name__ == '__main__':
     print_tabulated_csv(fifa_dataset, num_rows=50)
 
     # Generate the players.db
-    # create_players_db(fifa_dataset)
+    create_players_db(fifa_dataset)

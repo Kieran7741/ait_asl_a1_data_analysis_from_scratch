@@ -134,27 +134,29 @@ def print_basic_stats_about_team(player_db, team):
 
 if __name__ == '__main__':
 
-    # Create DB objects
+    ######  Create DB objects ######
     player_db = DB(players_db_path)
     league_db = DB(leagues_db_path)
 
-    # Read team name from command line or input
+    ######  Read team name from command line or input ######
     if len(sys.argv) > 1:
         team_name = sys.argv[1]
     else:
         team_name = input('Please enter team name: ')
 
-    # Validate the provided team name: Case sensitive
+    ######  Validate the provided team name: Case sensitive ######
+
     if not player_db.validate_team(team_name):
         raise Exception(f'Invalid team name provided: {team_name}')
 
-    # Some number associated with the dataset
+    ######  Number of rows in the dataset ######
+
     entire_dataset = player_db.select(['*'], dict_result=False)
     print(f'\nNumber of rows in the dataset: {len(entire_dataset)}')
 
     print_basic_stats_about_team(player_db, team_name)
 
-    # Generate Plots
+    ###### Generate Plots ######
 
     # Create bar chart of Player wages at Manchester united
     result = player_db.select(select=['Name', 'Wage'], where=f'Club="{team_name}"')
