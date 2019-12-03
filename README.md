@@ -10,6 +10,7 @@ Clone this repo from github.
 
 ### Installing
 
+This project has been tested on macOS and on Ubuntu
 
 It is recommended that you create a virtual environment and pip install the contents of requirements.txt
 ```
@@ -29,11 +30,13 @@ python main.py 'Manchester United'
 
 ### Running flask app
 
-The flask app will be served on the local host port 5000
+The flask app will be served on the localhost port 5000
 
 ```
 python app.py
 ```
+
+Visit http://127.0.0.1:5000/dashboard/Arsenal to display the dashboard
 
 ### Running unit tests
 
