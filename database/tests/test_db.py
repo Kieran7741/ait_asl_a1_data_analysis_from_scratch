@@ -14,10 +14,12 @@ class TestDb(unittest.TestCase):
 
     def test_create_dict_from_db_query(self):
 
-        result = create_dict_from_db_query([('David De Gea Quintana', '€205K'), ('Paul Pogba', '€250K')],
+        result = create_dict_from_db_query([('David De Gea Quintana', '€205K'),
+                                            ('Paul Pogba', '€250K')],
                                            ['Name', 'Wage'])
 
-        self.assertEqual(result, {'Name': ['David De Gea Quintana', 'Paul Pogba'], 'Wage': ['€205K', '€250K']})
+        self.assertEqual(result, {'Name': ['David De Gea Quintana', 'Paul Pogba'],
+                                  'Wage': ['€205K', '€250K']})
 
     def test_create_db_object_fails_if_not_file_exists(self):
 
