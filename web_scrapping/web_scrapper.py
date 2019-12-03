@@ -52,7 +52,7 @@ def build_league_map(url):
     return league_map
 
 
-def create_and_populate_clubs_table(url):
+def create_and_populate_league_db(url):
     """
     Create the leagues db
 
@@ -74,5 +74,5 @@ def create_and_populate_clubs_table(url):
 
 if __name__ == '__main__':
     print('Running web scrapper.')
-    create_and_populate_clubs_table(teams_url)
+    create_and_populate_league_db(teams_url)
 
