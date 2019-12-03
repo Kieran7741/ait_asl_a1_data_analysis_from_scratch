@@ -75,7 +75,8 @@ def create_pie_chart(values, labels, title='', save_path=None):
     return fig, ax
 
 
-def create_bar_chart(values, labels, x_label='', y_label='', title='', horizontal=False, save_path=None):
+def create_bar_chart(values, labels, x_label='', y_label='', title='',
+                     horizontal=False, save_path=None):
     """
     Create a bar chart.
 

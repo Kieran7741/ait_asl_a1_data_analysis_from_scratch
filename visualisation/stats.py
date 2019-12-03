@@ -64,7 +64,8 @@ def standard_deviation(target_values):
 
     values_mean = mean(target_values)
     minus_mean_square = [(value - values_mean)**2 for value in target_values]
-    return round(math.sqrt(sum(minus_mean_square) / (len(target_values) - 1)), 3)
+    return round(math.sqrt(sum(minus_mean_square) /
+                           (len(target_values) - 1)), 3)
 
 
 ######################################
@@ -123,10 +124,6 @@ def get_slope(x_list, y_list):
     :rtype: float
     """
 
-    # Ensure each value is a float. Saves the need to do so later.
-    x_list = [float(x) for x in x_list]
-    y_list = [float(y) for y in y_list]
-
     x_sqr = [x ** 2 for x in x_list]
 
     xy = [x * y for x, y in zip(x_list, y_list)]
@@ -142,7 +139,7 @@ def get_slope(x_list, y_list):
 def calculate_least_squares_variables(x_values, y_values):
     """
     Calculates slope and y intersect for line of best fit:
-        y = mx + c, where m = slope, c = y intersect(value of y when x is 0)
+    y = mx + c, where m = slope, c = y intersect(value of y when x is 0)
 
     :param x_values: list of x values used to calculate line of best fit.
     :type x_values: list

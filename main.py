@@ -116,26 +116,22 @@ def plot_age_pie_chart(player_db):
 
     print(f'Youngest age: {youngest_age}; Oldest age: {oldest_age}')
 
-    age_brackets = [21, 26, 31, 36, oldest_age]
+    age_brackets = [youngest_age, 21, 26, 31, 36, oldest_age]
 
     age_counts = OrderedDict()
     for i, age_bracket in enumerate(age_brackets):
 
-        if age_bracket == 21:
-            # first age bracket, use youngest age
-            age_counts[f'{youngest_age}-{age_bracket}'] = len([age for age in ages
-                                                               if youngest_age <= age <= age_bracket])
-        elif i+1 < len(age_brackets):
+        if i+1 < len(age_brackets):
             # ensure there is a age bracket left
             age_counts[f'{age_bracket}-{age_brackets[i+1]}'] = len([age for age in ages
                                                                     if age_bracket <= age <= age_brackets[i+1]])
 
-    print(f'Age counts: {age_counts}')
+    print(f'Age Brackets: {age_counts}')
 
     brackets = age_counts.keys()
     counts = age_counts.values()
 
-    return visual.create_pie_chart(counts, labels=brackets, title='Player age counts',
+    return visual.create_pie_chart(counts, labels=brackets, title='Age Brackets',
                                    save_path='./figures/age_brackets.png')
 
 
